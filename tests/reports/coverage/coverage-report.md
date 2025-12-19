@@ -1,0 +1,27 @@
+| Name                                          |    Stmts |     Miss |   Cover |
+|---------------------------------------------- | -------: | -------: | ------: |
+| core/\_\_init\_\_.py                          |        0 |        0 |    100% |
+| core/admin.py                                 |       23 |        1 |     96% |
+| core/apps.py                                  |        3 |        3 |      0% |
+| core/forms.py                                 |       29 |        0 |    100% |
+| core/migrations/0001\_initial.py              |        8 |        0 |    100% |
+| core/migrations/0002\_auto\_20190616\_2144.py |        4 |        0 |    100% |
+| core/migrations/0003\_userprofile.py          |        6 |        0 |    100% |
+| core/migrations/0004\_auto\_20190630\_1408.py |        4 |        0 |    100% |
+| core/migrations/\_\_init\_\_.py               |        0 |        0 |    100% |
+| core/models.py                                |      109 |        0 |    100% |
+| core/templatetags/cart\_template\_tags.py     |       10 |        0 |    100% |
+| core/tests.py                                 |        1 |        1 |      0% |
+| core/urls.py                                  |        4 |        0 |    100% |
+| core/views.py                                 |      309 |        6 |     98% |
+| djecommerce/\_\_init\_\_.py                   |        0 |        0 |    100% |
+| djecommerce/settings/\_\_init\_\_.py          |        0 |        0 |    100% |
+| djecommerce/settings/base.py                  |       23 |        0 |    100% |
+| djecommerce/settings/development.py           |       14 |        3 |     79% |
+| djecommerce/settings/production.py            |        7 |        7 |      0% |
+| djecommerce/urls.py                           |       12 |        5 |     58% |
+| djecommerce/wsgi.py                           |        4 |        4 |      0% |
+| manage.py                                     |        9 |        2 |     78% |
+| tests/test\_models.py                         |      141 |        0 |    100% |
+| tests/test\_views.py                          |      613 |       14 |     98% |
+|                                     **TOTAL** | **1333** |   **46** | **97%** |

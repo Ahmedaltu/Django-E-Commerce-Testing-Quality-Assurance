@@ -1,0 +1,132 @@
+Pull Request: Full Implementation of the Test Suite
+
+OVERVIEW AND MOTIVATION
+For the Django E-Commerce application, this PR introduces a test suite which consists of unit tests, automated user interface tests, and configuration for static code analysis. This PR does not contain any bug fixes or features for the application.
+The testing effort behind this PR also involved manual exploratory testing, a session sheet of which is included.
+
+The testing revealed multiple defects and issues, some which are documented in the issue list found below in this PR, in the test report in tests/reports/test_summary_report.md, and the rest in the added unit tests.
+This PR also documents a few code quality issues, such as unreachable code and other code smells, found via manual inspection and static code analysis.
+
+For the most complex parts of the code, decision tables are included in tests/reports/test_summary_report.md and tests/reports/PaymentViewTestMCDC.md.
+According to Copeland [1], descision tables are a useful tool for testing when dealing with complex business rules.
+The tables included in this PR should help maintainers of this project reason about the business rules and also see the state of the test coverage across their conditions.
+For the most critical code paths used for checkout and payment, this PR adds tests with MC/DC, several of which fail with the current code.
+Fixing most of these defects and issues would be necessary before using the software in production.
+
+The identified pricing defects, including floating-point arithmetic errors and coupon calculation issues, raise concerns regarding regulatory compliance. Price verification standards established by consumer protection regulations (e.g., NIST Handbook 130 [2]) require pricing accuracy of at least 98% and identify overcharges and undercharges as violations.
+
+Overall, merging these changes would be a crucial step in bringing the quality of the software closer to a production-ready state.
+
+TEST COVERAGE ADDED
+
+1. Robot Framework Tests (Black Box Testing)
+End to end automated tests were created to cover:
+
+Order Management: 
+  - Empty Cart Confirmed
+  - Adding/removing products from the cart
+  - Incrementing/decrementing quantity of items in cart 
+  - Cart is persistent across browser sessions
+  - Cart is persistent after logout/login
+
+Authentication: 
+  - Successful login with a valid username and password
+  - Users selecting to sign up with valid username and password
+  - Negative path: users trying to sign up with an already existing username
+  - Negative path: users trying to sign up with weak password (< 6 characters)
+  - Negative path: users trying to login with invalid username
+  - Negative path: users trying to login with invalid password
+  - Negative path: users trying to login with no input 
+
+Test Results: All Robot Framework tests passed.
+
+
+2. Django Unit Tests (White Box Testing)
+
+Model Tests (tests/test_models.py):
+  - Complete testing for all models (Item, OrderItem, Order, Address, 
+    Payment, Coupon, Refund, UserProfile)
+  - 100% statement coverage achieved on core/models.py
+
+
+Review of Tests (tests/test_views.py):
+
+- CheckoutView: MC/DC (Modified Condition/Decision Coverage) testing with 
+  13 test cases covering all conditional branches
+- PaymentView: MC/DC testing of payment processing logic
+- CouponView: Validating application of discount coupons
+- RefundView: Form validation and processing tests
+- 98% statement coverage achieved on core/views.py
+
+3. Static Code Analysis Configuration
+
+3.1 Pylint: 
+
+Configuration files were added for code quality analysis. 
+The analysis covered all main application modules under `core/` and project settings under `djecommerce/`.
+
+- **Total statements analyzed:** 489
+- **Total lines analyzed:** 915
+- **Score:** 9.67/10 (Excellent)
+- **Duplicated lines:** 0% (No duplication detected)
+- **Documentation coverage:** ~18% of modules contain docstrings
+
+This indicates a **high-quality and maintainable codebase**, with only minor style and complexity issues identified.
+
+
+Key Findinga
+
+| Type               | Count | Description                                                                |
+|--------------------|-------|----------------------------------------------------------------------------|
+| **Convention (C)** | 7     | Naming convention issues (mainly variable names like `e`)                  |
+| **Refactor (R)**   | 7     | Opportunities to simplify functions (too complex / redundant `else` usage) |
+| **Warning (W)**    | 2     | Unused function arguments detected                                         |
+| **Error (E)**      | 0     | No syntax or logical errors found                                          |
+| **Fatal (F)**      | 0     | None                                                                       |
+
+
+3.2 SonarQube: 
+- Integration set up for ongoing code quality control 
+- Passed quality gate with an "A" rating in the "Security," "Reliability," and "Maintainability" categories
+- Identified four security hotspots for review in the future
+
+IDENTIFIED ISSUES (Not Fixed in This PR)
+
+High Priority: 
+- UnboundLocalError in checkout flow (when shipping is invalid and 
+    billing address is same)
+- No address validation on checkout, before reaching payment
+- Invalid coupon application crashes request
+- Anonymous user accessing payment view crashes
+- Authorized refunds can be requested with known ref code
+
+Medium Priority: 
+- Login allows empty fields and does not provide feedback
+- Coupon application without an active order enters an infinite redirect
+- Invalid refund form submission crashes request.
+
+Low Priority / UX Issues: 
+- Discount not shown in checkout, only the discount price is displayed
+- Country and zip code fields are not required
+
+FILES ADDED
+tests/
+  - test_models.py              Model unit tests
+  - test_views.py               View unit tests
+
+robot/                      Robot Framework test suites
+    - signup.robot
+    - order.robot
+    - ecommerce.robot
+    - persistence.robot
+
+/
+  - .pylintrc                   Pylint configuration
+  - sonar-project.properties
+  - sonar-summary.json
+
+
+REFERENCES
+[1] Copeland, L. (2003). A Practitioner's Guide to Software Test Design. Artech House.
+
+[2] National Institute of Standards and Technology (NIST). Handbook 130 - 2025 Edition: Examination Procedure for Price Verification. Page 251. Available at: https://www.nist.gov/system/files/documents/2024/12/16/2025_HB130-V_Price-Verification-20241205.pdf

@@ -1,0 +1,74 @@
+CHARTER
+-------
+Explore and analyse all functionality reachable to the user with a browser and superuser credentials.
+Look for visual and functional issues, as well as risk areas.
+Use the responsive design browser tools to look for visual issues at various screen sizes.
+Change system state from admin tools during usage/checkout flow to evaluate robustness.
+
+START
+-----
+2025-11-08
+
+TESTER
+------
+Elias
+
+TASK BREAKDOWN
+--------------
+#DURATION
+50 min 58s
+
+TEST NOTES
+-----------
+On the front page, the shirt image doesn't load.
+After adding a new item from admin with an image, its image appears normally.
+The product page doesn't display the product image but unrelated placeholders.
+
+The normal price of shirt isn't shown on front page, just the discounted one.
+
+Clicking on the categories does nothing.
+
+Basic signup works without a problem.
+Basic login and logout works without a problem.
+
+Search doesn't return sensible results, "shoe" returns the shirt, as does an empty search.
+
+Tried adding to cart as non-logged in customer, redirected to login, after successful login product was added to card and customer was redirected to cart.
+
+Basic changing of quantity in cart works.
+Clicking the + and - buttons too quickly may result in not all clicks getting registered.
+
+Add to cart successfully increments quantity in basket.
+
+Emptying the cart works.
+
+Remove from cart presents notification if item was not in cart.
+Remove from cart removes from cart if there is one in cart, and also if there are more than one of it.
+
+Price and discount displays in card work with multiple products with varying prices, quantities and discounts.
+
+Crashes with UnboundLocalError at /checkout/ when attempting to checkout with a Finnish shipping address, billing address same as shipping, stripe payment option, without any entered zipcode. Same happens when the zipcode is entered. And with paypal.
+However, proceeding to payment works when unchecking "billing address same as shipping" and entering billing address separately, at least with paypal.
+
+On payment page, "Submit payment" does nothing with fake credit or debit card info. A POST request is sent to api.stripe.com and 401 is returned.
+
+Refreshing the payment page updates the prices and total if an item's price has changed.
+
+Both stripe and paypal options at checkout seem to proceed to a payment page for stripe.
+
+Logging out empties the card from the perspective of the now logged-out user, but logging back in restores it successfully.
+
+Order summary page introduces horizontal scrolling when viewport width is less than 434px, but doesn't break.
+
+At widths less than about 985px, hamburger menu is introduced. It works without problems.
+
+Home page and product pages work without problems even at very small widths suchs as 200px.
+
+Total item price gets floating point inaccuracies. For example item with price 99.99: increasing quantity from 1 to 3 returns a price of $269.96999999999997.
+
+After an order has been created, the customer cannot view it.
+
+Entering a valid coupon code works and decreases price.
+Entering a coupon code with greater value than the basket total can make the price negative.
+Only one coupon can be entered at a time.
+Attempting to enter a nonexistent coupon code crashes the site with ValueError at /add-coupon/. Order.coupon must be a "Coupon" instance.
